@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In & Sign Up – Recipe Rescue</title>
+  <meta name="description" content="Sign in or create your Recipe Rescue account using Google or a username and password to access your personal kitchen dashboard." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <style>
+    :root {
+      --bg: #FAF8F4;
+      --surface: #FFFFFF;
+      --ink: #1C1D18;
+      --ink-secondary: #5F6156;
+      --ink-muted: #9A9C8F;
+      --line: #E6E2D8;
+      --line-strong: #D2CDBE;
+
+      --accent: #2F4A38;
+      --accent-bright: #3E6249;
+      --accent-soft: #E9EEE6;
+
+      --clay: #A85A2C;
+      --clay-soft: #F4E7D9;
+
+      --font-display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+      --space-1: 0.5rem;
+      --space-2: 0.875rem;
+      --space-3: 1.5rem;
+      --space-4: 2.5rem;
+
+      --radius-sm: 6px;
+      --radius: 10px;
+      --radius-lg: 18px;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+      --shadow-sm: 0 2px 8px rgba(28, 29, 24, 0.05);
+      --shadow-md: 0 12px 28px rgba(28, 29, 24, 0.08);
+      --shadow-lg: 0 24px 60px rgba(28, 29, 24, 0.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--ink);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background:
+        radial-gradient(ellipse 900px 600px at 10% 0%, rgba(47, 74, 56, 0.06), transparent 60%),
+        radial-gradient(ellipse 800px 600px at 100% 100%, rgba(168, 90, 44, 0.05), transparent 60%);
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button { font-family: inherit; cursor: pointer; background: none; border: none; color: inherit; }
+    input, select { font-family: inherit; font-size: 1rem; color: var(--ink); }
+
+    h1 { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.01em; }
+
+    ::selection { background: var(--accent); color: #fff; }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+    /* ================= Layout ================= */
+    .auth-page-wrapper { min-height: 100vh; display: flex; flex-direction: column; }
+
+    .auth-top-nav {
+      padding: 1.4rem var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .brand-logo { display: flex; align-items: center; gap: 0.7rem; }
+    .logo-icon-wrap {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--ink);
+      color: var(--surface);
+      border-radius: 50%;
+      font-size: 0.85rem;
+    }
+    .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+    .brand-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 500; color: var(--ink); }
+    .text-accent { color: var(--accent); font-style: italic; }
+
+    .back-home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+      color: var(--ink-secondary);
+      transition: color 0.2s var(--ease);
+    }
+    .back-home-link:hover { color: var(--ink); }
+
+    .auth-main-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-3) var(--space-3) var(--space-4);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 460px;
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .auth-header { text-align: center; margin-bottom: var(--space-3); }
+    .auth-header-icon {
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 1.3rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto var(--space-2);
+    }
+    .auth-title { font-size: 1.7rem; color: var(--ink); margin-bottom: 0.4rem; }
+    .auth-subtitle { font-size: 0.9rem; color: var(--ink-secondary); }
+
+    /* ================= Tabs ================= */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.3rem;
+      margin-bottom: var(--space-3);
+    }
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--ink-secondary);
+      border-radius: 999px;
+      text-align: center;
+      transition: all 0.2s var(--ease);
+    }
+    .auth-tab-btn.active { background: var(--ink); color: var(--surface); }
+
+    /* ================= Google Button ================= */
+    .btn-google {
+      width: 100%;
+      background: var(--surface);
+      color: var(--ink);
+      font-weight: 500;
+      font-size: 0.94rem;
+      padding: 0.85rem 1.25rem;
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s var(--ease);
+      margin-bottom: var(--space-3);
+    }
+    .btn-google:hover { border-color: var(--ink); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .google-icon-svg { width: 19px; height: 19px; }
+
+    /* ================= Divider ================= */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: var(--space-3);
+      color: var(--ink-muted);
+      font-size: 0.82rem;
+    }
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ================= Form ================= */
+    .auth-form { display: flex; flex-direction: column; gap: var(--space-2); }
+    .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+    .form-label { font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+
+    .form-input-wrap { position: relative; display: flex; align-items: center; }
+    .input-icon { position: absolute; left: 16px; color: var(--ink-muted); font-size: 0.9rem; pointer-events: none; }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 0.78rem 1.1rem 0.78rem 2.7rem;
+      color: var(--ink);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    }
+    .form-control::placeholder { color: var(--ink-muted); }
+    .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); background: var(--surface); }
+
+    select.form-control {
+      padding-left: 2.7rem;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235F6156' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      background-size: 15px;
+    }
+
+    .toggle-password-btn {
+      position: absolute;
+      right: 16px;
+      color: var(--ink-muted);
+      padding: 4px;
+      font-size: 0.9rem;
+      transition: color 0.2s var(--ease);
+    }
+    .toggle-password-btn:hover { color: var(--ink); }
+
+    .form-extra-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      margin-top: -0.1rem;
+    }
+    .remember-me-label { display: flex; align-items: center; gap: 0.5rem; color: var(--ink-secondary); cursor: pointer; }
+    .remember-me-label input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+    .forgot-link { color: var(--accent); font-weight: 500; }
+    .forgot-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+    /* ================= Buttons ================= */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      padding: 0.9rem 1.7rem;
+      font-size: 0.94rem;
+      font-weight: 500;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: background 0.25s var(--ease), transform 0.2s var(--ease), box-shadow 0.25s var(--ease);
+    }
+    .btn:active { transform: translateY(1px) scale(0.99); }
+    .btn-primary { background: var(--ink); color: var(--surface); box-shadow: var(--shadow-sm); }
+    .btn-primary:hover { background: var(--accent-bright); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+    .w-full { width: 100%; }
+
+    /* ================= Demo Box ================= */
+    .demo-account-box {
+      margin-top: var(--space-3);
+      padding: 0.9rem 1.1rem;
+      background: var(--accent-soft);
+      border: 1px dashed var(--accent);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+    }
+    .demo-account-box strong { color: var(--ink); font-weight: 600; }
+    .demo-btn {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.4rem 0.9rem;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      white-space: nowrap;
+      transition: all 0.2s var(--ease);
+    }
+    .demo-btn:hover { background: var(--accent); color: #fff; }
+
+    /* ================= Toast ================= */
+    .toast-container {
+      position: fixed;
+      bottom: var(--space-3);
+      right: var(--space-3);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .toast {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 0.9rem 1.3rem;
+      background: var(--ink);
+      color: var(--surface);
+      border-radius: 999px;
+      font-size: 0.86rem;
+      box-shadow: var(--shadow-lg);
+      animation: toastIn 0.3s var(--ease);
+    }
+    .toast-info { background: var(--accent); }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 520px) {
+      .auth-card { padding: var(--space-3); }
+      .auth-top-nav { flex-direction: column; gap: var(--space-2); align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <div class="auth-page-wrapper">
+    <header class="auth-top-nav">
+      <a href="index.html" class="brand-logo" aria-label="Recipe Rescue Home">
+        <div class="logo-icon-wrap"><i class="fa-solid fa-leaf"></i></div>
+        <div class="brand-text">
+          <span class="brand-title">Recipe <span class="text-accent">Rescue</span></span>
+        </div>
+      </a>
+
+      <a href="index.html" class="back-home-link">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Back to home</span>
+      </a>
+    </header>
+
+    <main class="auth-main-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-header-icon"><i class="fa-solid fa-shield-halved"></i></div>
+          <h1 class="auth-title" id="auth-title">Welcome back</h1>
+          <p class="auth-subtitle" id="auth-subtitle">Sign in to sync your kitchen pantry and dashboard</p>
+        </div>
+
+        <div class="auth-tabs" role="tablist">
+          <button type="button" class="auth-tab-btn active" id="tab-signin" role="tab" aria-selected="true">Sign in</button>
+          <button type="button" class="auth-tab-btn" id="tab-signup" role="tab" aria-selected="false">Create account</button>
+        </div>
+
+        <button type="button" class="btn-google" id="google-auth-btn" aria-label="Continue with Google">
+          <svg class="google-icon-svg" viewBox="0 0 48 48">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span id="google-btn-text">Continue with Google</span>
+        </button>
+
+        <div class="auth-divider">Or continue with credentials</div>
+
+        <form class="auth-form" id="auth-form" novalidate>
+          <div class="form-group signup-only" id="group-fullname" style="display: none;">
+            <label class="form-label" for="reg-fullname">Full name</label>
+            <div class="form-input-wrap">
+              <i class="fa-regular fa-user input-icon"></i>
+              <input type="text" id="reg-fullname" class="form-control" placeholder="Alex Morgan" autocomplete="name" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="auth-username" id="label-username">Username or email</label>
+            <div class="form-input-wrap">
+              <i class="fa-regular fa-envelope input-icon" id="user-input-icon"></i>
+              <input type="text" id="auth-username" class="form-control" placeholder="alex.morgan or alex@gmail.com" required autocomplete="username" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="auth-password">Password</label>
+            <div class="form-input-wrap">
+              <i class="fa-solid fa-lock input-icon"></i>
+              <input type="password" id="auth-password" class="form-control" placeholder="••••••••••••" required autocomplete="current-password" />
+              <button type="button" class="toggle-password-btn" id="toggle-password-btn" title="Show / hide password" aria-label="Toggle password visibility">
+                <i class="fa-regular fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group signup-only" id="group-diet" style="display: none;">
+            <label class="form-label" for="reg-diet">Primary dietary preference</label>
+            <div class="form-input-wrap">
+              <i class="fa-solid fa-utensils input-icon"></i>
+              <select id="reg-diet" class="form-control">
+                <option value="Omnivore">Omnivore (balanced)</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Vegan">Vegan (plant-based)</option>
+                <option value="Pescatarian">Pescatarian</option>
+                <option value="Keto">Keto / low-carb</option>
+                <option value="Gluten-Free">Gluten-free</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-extra-row" id="signin-extra-row">
+            <label class="remember-me-label">
+              <input type="checkbox" id="remember-me" checked />
+              <span>Remember me</span>
+            </label>
+            <a href="#" class="forgot-link" id="forgot-password-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-full" id="auth-submit-btn" style="margin-top: 0.3rem;">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            <span id="submit-btn-text">Sign in to dashboard</span>
+          </button>
+        </form>
+
+        <div class="demo-account-box">
+          <div>
+            <strong>Evaluation mode</strong>
+            <div>Quick one-click login test</div>
+          </div>
+          <button type="button" class="demo-btn" id="demo-account-btn">Quick demo sign in</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Toast notification utility
+      const toastContainer = document.getElementById('toast-container');
+      function showToast(message, type = 'success', iconClass = 'fa-circle-check') {
+        const toast = document.createElement('div');
+        toast.className = `toast ${type === 'info' ? 'toast-info' : ''}`;
+        toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${message}</span>`;
+        toastContainer.appendChild(toast);
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 3200);
+      }
+
+      // DOM Elements
+      const tabSignIn = document.getElementById('tab-signin');
+      const tabSignUp = document.getElementById('tab-signup');
+      const authTitle = document.getElementById('auth-title');
+      const authSubtitle = document.getElementById('auth-subtitle');
+      const groupFullName = document.getElementById('group-fullname');
+      const groupDiet = document.getElementById('group-diet');
+      const signinExtraRow = document.getElementById('signin-extra-row');
+      const authSubmitBtn = document.getElementById('auth-submit-btn');
+      const submitBtnText = document.getElementById('submit-btn-text');
+      const authForm = document.getElementById('auth-form');
+      const authUsername = document.getElementById('auth-username');
+      const authPassword = document.getElementById('auth-password');
+      const regFullName = document.getElementById('reg-fullname');
+      const regDiet = document.getElementById('reg-diet');
+      const togglePasswordBtn = document.getElementById('toggle-password-btn');
+      const googleAuthBtn = document.getElementById('google-auth-btn');
+      const demoAccountBtn = document.getElementById('demo-account-btn');
+      const forgotPasswordLink = document.getElementById('forgot-password-link');
+
+      let currentMode = 'signin'; // 'signin' or 'signup'
+
+      // Check if user is already logged in
+      const existingUser = localStorage.getItem('recipe_rescue_user');
+      if (existingUser) {
+        try {
+          const u = JSON.parse(existingUser);
+          showToast(`Welcome back, ${u.name}! Redirecting to dashboard...`, 'success', 'fa-gauge-high');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 900);
+        } catch (e) {}
+      }
+
+      // Switch to Sign In Tab
+      tabSignIn.addEventListener('click', () => {
+        if (currentMode === 'signin') return;
+        currentMode = 'signin';
+        tabSignIn.classList.add('active');
+        tabSignUp.classList.remove('active');
+        tabSignIn.setAttribute('aria-selected', 'true');
+        tabSignUp.setAttribute('aria-selected', 'false');
+
+        authTitle.textContent = 'Welcome back';
+        authSubtitle.textContent = 'Sign in to sync your kitchen pantry and dashboard';
+        groupFullName.style.display = 'none';
+        groupDiet.style.display = 'none';
+        signinExtraRow.style.display = 'flex';
+        submitBtnText.textContent = 'Sign in to dashboard';
+      });
+
+      // Switch to Sign Up Tab
+      tabSignUp.addEventListener('click', () => {
+        if (currentMode === 'signup') return;
+        currentMode = 'signup';
+        tabSignUp.classList.add('active');
+        tabSignIn.classList.remove('active');
+        tabSignUp.setAttribute('aria-selected', 'true');
+        tabSignIn.setAttribute('aria-selected', 'false');
+
+        authTitle.textContent = 'Create account';
+        authSubtitle.textContent = 'Join Recipe Rescue to cut food waste and track your health';
+        groupFullName.style.display = 'flex';
+        groupDiet.style.display = 'flex';
+        signinExtraRow.style.display = 'none';
+        submitBtnText.textContent = 'Create account and continue';
+      });
+
+      // Toggle Password Visibility
+      togglePasswordBtn.addEventListener('click', () => {
+        const isPassword = authPassword.type === 'password';
+        authPassword.type = isPassword ? 'text' : 'password';
+        togglePasswordBtn.innerHTML = isPassword ? '<i class="fa-regular fa-eye-slash"></i>' : '<i class="fa-regular fa-eye"></i>';
+      });
+
+      // Google / Gmail OAuth Login Flow
+      googleAuthBtn.addEventListener('click', () => {
+        googleAuthBtn.disabled = true;
+        showToast('Connecting securely to Google Accounts...', 'info', 'fa-spinner fa-spin');
+
+        setTimeout(() => {
+          const gmailUser = {
+            id: 'usr-google-941',
+            name: 'Alex Morgan',
+            username: 'alex.morgan@gmail.com',
+            email: 'alex.morgan@gmail.com',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80',
+            diet: 'Balanced Omnivore',
+            authMethod: 'Google',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            stats: {
+              mealsRescued: 14,
+              moneySaved: 84,
+              co2Reduced: 11.2,
+              pantryItems: 12
+            }
+          };
+
+          localStorage.setItem('recipe_rescue_user', JSON.stringify(gmailUser));
+          showToast('Signed in with Google! Launching dashboard...', 'success', 'fa-circle-check');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 800);
+        }, 1100);
+      });
+
+      // 1-Click Demo Account
+      demoAccountBtn.addEventListener('click', () => {
+        authUsername.value = 'chef.demo';
+        authPassword.value = 'DemoSecret123!';
+        showToast('Demo credentials filled in. Signing in...', 'info', 'fa-bolt');
+
+        setTimeout(() => {
+          const demoUser = {
+            id: 'usr-demo-772',
+            name: 'Jordan Taylor',
+            username: 'chef.demo',
+            email: 'jordan.taylor@gmail.com',
+            avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=200&q=80',
+            diet: 'Vegetarian High-Protein',
+            authMethod: 'Username & Password',
+            joinedDate: 'Jan 2026',
+            stats: {
+              mealsRescued: 22,
+              moneySaved: 132,
+              co2Reduced: 17.6,
+              pantryItems: 16
+            }
+          };
+          localStorage.setItem('recipe_rescue_user', JSON.stringify(demoUser));
+          showToast('Welcome, Jordan! Entering your dashboard...', 'success', 'fa-gauge');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 700);
+        }, 600);
+      });
+
+      // Forgot Password
+      forgotPasswordLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const email = prompt('Enter your registered email address to receive password reset instructions:', authUsername.value || 'user@gmail.com');
+        if (email) {
+          showToast(`Password reset link sent to ${email}`, 'success', 'fa-paper-plane');
+        }
+      });
+
+      // Submit Form (Sign In / Sign Up)
+      authForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const usernameVal = authUsername.value.trim();
+        const passwordVal = authPassword.value;
+
+        if (!usernameVal) {
+          showToast('Please enter your username or email', 'info', 'fa-triangle-exclamation');
+          authUsername.focus();
+          return;
+        }
+
+        if (!passwordVal || passwordVal.length < 6) {
+          showToast('Password must be at least 6 characters', 'info', 'fa-lock');
+          authPassword.focus();
+          return;
+        }
+
+        authSubmitBtn.disabled = true;
+
+        if (currentMode === 'signup') {
+          const fullName = regFullName.value.trim() || usernameVal.split('@')[0] || 'Foodie Cook';
+          const dietPref = regDiet.value;
+
+          const newUser = {
+            id: `usr-${Date.now()}`,
+            name: fullName,
+            username: usernameVal,
+            email: usernameVal.includes('@') ? usernameVal : `${usernameVal}@gmail.com`,
+            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+            diet: dietPref,
+            authMethod: 'Username & Password',
+            joinedDate: new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            stats: {
+              mealsRescued: 3,
+              moneySaved: 18,
+              co2Reduced: 2.4,
+              pantryItems: 6
+            }
+          };
+
+          localStorage.setItem('recipe_rescue_user', JSON.stringify(newUser));
+          showToast(`Account created! Welcome to Recipe Rescue, ${fullName}`, 'success', 'fa-circle-check');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 800);
+        } else {
+          const existing = localStorage.getItem('recipe_rescue_user');
+          let userObj;
+          if (existing) {
+            try {
+              userObj = JSON.parse(existing);
+              userObj.username = usernameVal;
+            } catch (err) {}
+          }
+          if (!userObj) {
+            userObj = {
+              id: `usr-${Date.now()}`,
+              name: usernameVal.includes('@') ? usernameVal.split('@')[0] : usernameVal,
+              username: usernameVal,
+              email: usernameVal.includes('@') ? usernameVal : `${usernameVal}@gmail.com`,
+              avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+              diet: 'Balanced Omnivore',
+              authMethod: 'Username & Password',
+              joinedDate: 'Sep 2026',
+              stats: {
+                mealsRescued: 8,
+                moneySaved: 48,
+                co2Reduced: 6.4,
+                pantryItems: 8
+              }
+            };
+          }
+
+          localStorage.setItem('recipe_rescue_user', JSON.stringify(userObj));
+          showToast(`Logged in successfully as ${userObj.name}`, 'success', 'fa-circle-check');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 700);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
